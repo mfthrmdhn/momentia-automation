@@ -1,0 +1,19 @@
+{
+  "name": "momentia-automation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test:api": "npx playwright test --project=api-tests",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "typescript": "^5.5.3",
+    "@types/node": "^20.11.1",
+    "dotenv": "^16.0.3",
+    "superstruct": "2.0.2"
+  },
+  "private": true
+}
