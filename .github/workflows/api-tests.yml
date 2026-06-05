@@ -24,13 +24,21 @@ jobs:
           repository: mfthrmdhn/momentia-be
           path: momentia-be
 
-      - name: Start backend services
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: momentia-be/go.mod
+
+      - name: Start database
         run: docker compose up -d
+        working-directory: momentia-be
+
+      - name: Start Go server
+        run: go run ./cmd/api &
         working-directory: momentia-be
 
       - name: Wait for backend to be ready
         run: |
-          go build -o bin/server ./cmd/api && ./bin/server
           echo "Waiting for backend on port 8080..."
           for i in $(seq 1 30); do
             if curl -sf http://localhost:8080/health > /dev/null 2>&1; then
@@ -41,9 +49,7 @@ jobs:
             sleep 5
           done
           echo "Backend failed to start in time"
-          docker compose logs --tail=50
           exit 1
-        working-directory: momentia-be
 
       - uses: actions/setup-node@v4
         with:
