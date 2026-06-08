@@ -42,7 +42,6 @@ jobs:
             sudo mv migrate /usr/local/bin/migrate
 
       - name: Run Migrations
-        if: github.event.client_payload.migration_path != ''
         run: migrate -path internal/db/migrations -database "postgres://bapak_kau:your_father_head@localhost:5433/momentia?sslmode=disable" up
         working-directory: momentia-be
 
@@ -52,7 +51,22 @@ jobs:
         working-directory: momentia-be
 
       - name: Start Go server
-        run: go run ./cmd/api &
+        run: |
+          go run ./cmd/api > server.log 2>&1 &
+          SERVER_PID=$!
+          
+          # Give the server time to start
+          sleep 3
+          
+          # Check if process is still running
+          if ! kill -0 $SERVER_PID 2>/dev/null; then
+            echo "Server failed to start. Logs:"
+            cat server.log
+            exit 1
+          fi
+          
+          # Store PID for later cleanup
+          echo $SERVER_PID > /tmp/server.pid
         working-directory: momentia-be
 
       - name: Wait for backend to be ready
@@ -66,8 +80,36 @@ jobs:
             echo "Attempt $i/30 - not ready yet, retrying in 5s..."
             sleep 5
           done
+          
+          # If we get here, backend didn't start
           echo "Backend failed to start in time"
+          if [ -f server.log ]; then
+            echo "Server logs:"
+            cat server.log
+          fi
           exit 1
+        working-directory: momentia-be
+
+      - name: Wait for backend to be ready
+        run: |
+          echo "Waiting for backend on port 8080..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/health > /dev/null 2>&1; then
+              echo "Backend is ready"
+              exit 0
+            fi
+            echo "Attempt $i/30 - not ready yet, retrying in 5s..."
+            sleep 5
+          done
+          
+          # If we get here, backend didn't start
+          echo "Backend failed to start in time"
+          if [ -f server.log ]; then
+            echo "Server logs:"
+            cat server.log
+          fi
+          exit 1
+        working-directory: momentia-be
 
       - uses: actions/setup-node@v4
         with:
