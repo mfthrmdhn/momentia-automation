@@ -87,12 +87,12 @@ jobs:
 
           # Check the backend readyness
           echo "Waiting for backend on port 8080..."
-          for i in $(seq 1 30); do
+          for i in $(seq 1 5); do
             if curl -sf http://localhost:8080/health > /dev/null 2>&1; then
               echo "Backend is ready"
               exit 0
             fi
-            echo "Attempt $i/30 - not ready yet, retrying in 5s..."
+            echo "Attempt $i/5 - not ready yet, retrying in 5s..."
             sleep 5
           done
           
