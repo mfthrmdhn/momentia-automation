@@ -68,7 +68,7 @@ jobs:
         env:
           DATABASE_URL: "postgres://bapak_kau:your_father_head@localhost:5433/momentia?sslmode=disable"
         run: |
-          go run ./cmd/api > server.log 2>&1 &
+          nohup go run ./cmd/api > server.log 2>&1 &
           SERVER_PID=$!
           
           # Give the server time to start
