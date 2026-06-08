@@ -2,8 +2,8 @@ import { loginSchema } from '../api/schema/auth.schema';
 import { generalResponseSchema, errorResponseSchema } from '../api/schema/general.schema';
 import { Struct } from 'superstruct';
 
-const validEmail = 'mocks@gustr.com';
-const validPassword = 'skidipapap';
+const validEmail = 'mocks@cuvox.de';
+const validPassword = 'testpassword';
 
 export interface LoginScenario {
     description: string;
