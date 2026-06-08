@@ -15,6 +15,7 @@ jobs:
 
     env:
       API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
 
     steps:
       - name: Checkout automation repo
