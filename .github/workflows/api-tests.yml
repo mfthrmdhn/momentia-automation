@@ -61,13 +61,23 @@ jobs:
 
       - name: Seed database
         env:
-          DATABASE_URL: "postgres://bapak_kau:your_father_head@localhost:5433/momentia?sslmode=disable"
+          DB_HOST: localhost
+          DB_PORT: "5433"
+          DB_USER: bapak_kau
+          DB_PASSWORD: your_father_head
+          DB_NAME: momentia
+          DB_SSLMODE: disable
         run: ${{github.event.client_payload.seed_cmd || 'go run ./cmd/seed'}}
         working-directory: momentia-be
 
       - name: Start Go server
         env:
-          DATABASE_URL: "postgres://bapak_kau:your_father_head@localhost:5433/momentia?sslmode=disable"
+          DB_HOST: localhost
+          DB_PORT: "5433"
+          DB_USER: bapak_kau
+          DB_PASSWORD: your_father_head
+          DB_NAME: momentia
+          DB_SSLMODE: disable
         run: |
           nohup go run ./cmd/api > server.log 2>&1 &
           SERVER_PID=$!
