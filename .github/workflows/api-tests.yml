@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+  repository_dispatch:
+    types: [be-ci-trigger]
 
 jobs:
   test:
@@ -22,6 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: mfthrmdhn/momentia-be
+          ref: ${{github.event.client_payload.sha || github.event.client_payload.be_branch ||'main'}}
           path: momentia-be
 
       - name: Set up Go
@@ -31,6 +34,21 @@ jobs:
 
       - name: Start database
         run: docker compose up -d
+        working-directory: momentia-be
+
+      - name: Install migrate CLI
+        run: |
+            curl -L https://github.com/golang-migrate/migrate/releases/latest/download/migrate.linux-amd64.tar.gz | tar xvz
+            sudo mv migrate /usr/local/bin/migrate
+
+      - name: Run Migrations
+        if: github.event.client_payload.migration_path != ''
+        run: migrate -path internal/db/migrations -database "postgres://bapak_kau:your_father_head@localhost:5433/momentia?sslmode=disable" up
+        working-directory: momentia-be
+
+      - name: Seed database
+        if: github.event.client_payload.seed_cmd != ''
+        run: ${{github.event.client_payload.seed_cmd}}
         working-directory: momentia-be
 
       - name: Start Go server
