@@ -60,6 +60,8 @@ jobs:
         working-directory: momentia-be
 
       - name: Seed database
+        env:
+          DATABASE_URL: "postgres://bapak_kau:your_father_head@localhost:5433/momentia?sslmode=disable"
         run: ${{github.event.client_payload.seed_cmd || 'go run ./cmd/seed'}}
         working-directory: momentia-be
 
