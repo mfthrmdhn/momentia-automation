@@ -11,3 +11,7 @@ export const errorResponseSchema = object({
     ...generalFields,
     error: string(),
 });
+
+export const tokenErrorSchema = object({
+    error: string(),
+});

@@ -28,5 +28,3 @@ export class UserEndpoints {
         });
     }
 }
-
-export default UserEndpoints;
