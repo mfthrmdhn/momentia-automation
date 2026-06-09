@@ -7,7 +7,7 @@ export const test = base.extend<{}, { workerToken: string }>({
         const context = await playwright.request.newContext({
             baseURL: process.env.API_BASE_URL,
         });
-        const user = workerUsers[workerInfo.workerIndex % workerUsers.length];
+        const user = workerUsers[workerInfo.parallelIndex];
         const endpoints = new UserEndpoints(context);
 
         // Clear any stuck session left by a previous interrupted run.
@@ -21,7 +21,7 @@ export const test = base.extend<{}, { workerToken: string }>({
         const loginBody = await loginRes.json();
         if (!loginBody.data?.token) {
             throw new Error(
-                `Worker ${workerInfo.workerIndex} failed to login as ${user.email}. ` +
+                `Parallel worker ${workerInfo.parallelIndex} failed to login as ${user.email}. ` +
                 `Ensure workerUsers.length (${workerUsers.length}) >= total worker count.`
             );
         }
