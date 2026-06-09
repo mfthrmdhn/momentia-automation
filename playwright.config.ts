@@ -10,7 +10,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
-  workers: process.env.CI ? 1 : workerUsers.length,
+  workers: workerUsers.length,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'html',
   use: {
     trace: 'on',
