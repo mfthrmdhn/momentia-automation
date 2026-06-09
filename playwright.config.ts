@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 import dotenv from 'dotenv';
 import path from 'path';
+import { workerUsers } from './src/data/workers.data';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 export default defineConfig({
@@ -9,7 +10,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : workerUsers.length,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'html',
   use: {
     trace: 'on',

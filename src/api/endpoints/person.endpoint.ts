@@ -14,4 +14,10 @@ export class PersonEndpoints {
             data: data
         });
     }
+
+    async deletePerson(id: string, token?: string) {
+        return await this.PersonRequest.delete(`${prefix}/persons/${id}`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+    }
 }
