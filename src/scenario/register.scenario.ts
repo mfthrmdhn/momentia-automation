@@ -1,5 +1,5 @@
 import { registerSchema } from '../api/schema/auth.schema';
-import { generalResponseSchema, errorResponseSchema } from '../api/schema/general.schema';
+import { errorResponseSchema } from '../api/schema/general.schema';
 import { Struct } from 'superstruct';
 
 const ts = Date.now();
