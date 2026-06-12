@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 import dotenv from 'dotenv';
 import path from 'path';
-import { workerUsers } from './src/data/workers.data';
+import { workerUsers } from './src/data/user.data';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 export default defineConfig({

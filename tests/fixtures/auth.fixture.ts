@@ -1,6 +1,6 @@
 import { test as base } from '@playwright/test';
 import { UserEndpoints } from '../../src/api/endpoints/user.endpoint';
-import { workerUsers } from '../../src/data/workers.data';
+import { workerUsers } from '../../src/data/user.data';
 
 export const test = base.extend<{}, { workerToken: string }>({
     workerToken: [async ({ playwright }, use, workerInfo) => {

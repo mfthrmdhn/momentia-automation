@@ -1,9 +1,10 @@
 import { loginSchema } from '../api/schema/auth.schema';
 import { generalResponseSchema, errorResponseSchema } from '../api/schema/general.schema';
 import { Struct } from 'superstruct';
+import {firstUsers} from "../data/user.data";
 
-const validEmail = 'mocks@cuvox.de';
-const validPassword = 'testpassword';
+const validEmail = firstUsers.email;
+const validPassword = firstUsers.password;
 
 export interface LoginScenario {
     description: string;
