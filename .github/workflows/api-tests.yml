@@ -9,6 +9,9 @@ on:
   repository_dispatch:
     types: [be-ci-trigger]
 
+permissions:
+  contents: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -116,19 +119,52 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+#      disable because this is only for API tests
+#      - name: Install Playwright browsers
+#        run: npx playwright install --with-deps chromium
 
       - name: Run API tests
         run: npm run test:api
 
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
+      - name: Prune old reports
         if: always()
+        run: |
+          git fetch origin gh-pages
+          git worktree add /tmp/gh-pages origin/gh-pages
+          cd /tmp/gh-pages
+          shopt -s nullglob
+          cutoff=$(date -u -d '2 days ago' +%Y-%m-%d)
+          for dir in reports/*/; do
+            name=$(basename "$dir")
+            date="${name:0:10}"
+            if [[ "$date" < "$cutoff" ]]; then
+              rm -rf "$dir"
+            fi
+          done
+          git add -A
+          if ! git diff --cached --quiet; then
+            git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "chore: prune reports older than 2 days"
+            git push origin HEAD:gh-pages
+          fi
+
+      - name: Set report path
+        if: always()
+        run: echo "REPORT_PATH=reports/$(date -u +%Y-%m-%d)-${{ github.run_id }}" >> "$GITHUB_ENV"
+
+      - name: Deploy Playwright report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./playwright-report
+          destination_dir: ${{ env.REPORT_PATH }}
+          keep_files: true
+
+      - name: Output report URL
+        if: always()
+        run: |
+          echo "### Playwright Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "[View report](https://mfthrmdhn.github.io/momentia-automation/${{ env.REPORT_PATH }}/)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Stop backend services
         if: always()
