@@ -2,9 +2,10 @@ import { test, expect } from '@playwright/test';
 import { assert } from 'superstruct';
 import { UserEndpoints } from '../../src/api/endpoints/user.endpoint';
 import { logoutScenarios } from '../../src/scenario/logout.scenario';
+import { firstUsers } from '../../src/data/user.data';
 
-const validEmail = 'mocks@cuvox.de';
-const validPassword = 'testpassword';
+const validEmail = firstUsers.email;
+const validPassword = firstUsers.password;
 
 let userEndpoints: UserEndpoints;
 
